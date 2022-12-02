@@ -1,5 +1,7 @@
 pub mod common;
+
 mod day1;
+mod day2;
 
 use std::fs;
 
@@ -14,7 +16,7 @@ fn run_day<'a, D: Day<'a>>(content: &'a str) {
 }
 
 fn main() {
-    let content = fs::read_to_string(format!("input/day{}.txt", day1::Day1::day_number()))
+    let content = fs::read_to_string(format!("input/day{}.txt", day2::Day2::day_number()))
         .expect("Error while reading input file");
-    run_day::<day1::Day1>(&content);
+    run_day::<day2::Day2>(&content);
 }
