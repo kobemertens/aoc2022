@@ -3,48 +3,25 @@ use crate::common::Day;
 pub struct Day2;
 
 #[derive(Debug, PartialEq)]
-pub enum Item {
+pub enum Shape {
     Rock,
     Paper,
     Scissors,
 }
 
-#[derive(Debug)]
-pub enum Outcome {
-    Loss,
-    Draw,
-    Win,
-}
-
-fn map_item_to_outcome(item: &Item) -> Outcome {
-    match item {
-        Item::Rock => Outcome::Loss,
-        Item::Paper => Outcome::Draw,
-        Item::Scissors => Outcome::Win,
-    }
-}
-
-type Turn = (Item, Item);
-
-fn outcome_to_score(outcome: &Outcome) -> usize {
-    match outcome {
-        Outcome::Loss => 0,
-        Outcome::Draw => 3,
-        Outcome::Win => 6,
-    }
-}
+type Turn = (Shape, Shape);
 
 fn get_my_points(turn: &Turn) -> usize {
     let shape_score = match turn.1 {
-        Item::Rock => 1,
-        Item::Paper => 2,
-        Item::Scissors => 3,
+        Shape::Rock => 1,
+        Shape::Paper => 2,
+        Shape::Scissors => 3,
     };
 
     let outcome_score = match turn {
-        (Item::Rock, Item::Paper) => 6,
-        (Item::Paper, Item::Scissors) => 6,
-        (Item::Scissors, Item::Rock) => 6,
+        (Shape::Rock, Shape::Paper) => 6,
+        (Shape::Paper, Shape::Scissors) => 6,
+        (Shape::Scissors, Shape::Rock) => 6,
         (x, y) => {
             if x == y {
                 3
@@ -57,35 +34,35 @@ fn get_my_points(turn: &Turn) -> usize {
     outcome_score + shape_score
 }
 
-fn my_move(opponent: &Item, outcome: &Outcome) -> usize {
+fn my_move(opponent: &Shape, outcome: &Shape) -> usize {
     match (opponent, outcome) {
-        (Item::Rock, Outcome::Loss) => 3,
-        (Item::Rock, Outcome::Draw) => 4,
-        (Item::Rock, Outcome::Win) => 8,
+        (Shape::Rock, Shape::Rock) => 3,
+        (Shape::Rock, Shape::Paper) => 4,
+        (Shape::Rock, Shape::Scissors) => 8,
 
-        (Item::Paper, Outcome::Loss) => 1,
-        (Item::Paper, Outcome::Draw) => 5,
-        (Item::Paper, Outcome::Win) => 9,
+        (Shape::Paper, Shape::Rock) => 1,
+        (Shape::Paper, Shape::Paper) => 5,
+        (Shape::Paper, Shape::Scissors) => 9,
 
-        (Item::Scissors, Outcome::Loss) => 2,
-        (Item::Scissors, Outcome::Draw) => 6,
-        (Item::Scissors, Outcome::Win) => 7,
+        (Shape::Scissors, Shape::Rock) => 2,
+        (Shape::Scissors, Shape::Paper) => 6,
+        (Shape::Scissors, Shape::Scissors) => 7,
     }
 }
 
 fn parse_turn(line: &str) -> Turn {
     let mut parts = line.split(' ');
     let first = match parts.next().unwrap() {
-        "A" => Item::Rock,
-        "B" => Item::Paper,
-        "C" => Item::Scissors,
+        "A" => Shape::Rock,
+        "B" => Shape::Paper,
+        "C" => Shape::Scissors,
         _ => panic!("Should never happen"),
     };
 
     let second = match parts.next().unwrap() {
-        "X" => Item::Rock,
-        "Y" => Item::Paper,
-        "Z" => Item::Scissors,
+        "X" => Shape::Rock,
+        "Y" => Shape::Paper,
+        "Z" => Shape::Scissors,
         _ => panic!("Should never happen"),
     };
 
@@ -105,10 +82,7 @@ impl<'a> Day<'a> for Day2 {
     }
 
     fn part2(input: &Self::Input) -> Self::Output {
-        input
-            .iter()
-            .map(|(x, y)| my_move(x, &map_item_to_outcome(y)))
-            .sum()
+        input.iter().map(|(x, y)| my_move(x, y)).sum()
     }
 
     fn parse(input: &'a str) -> Self::Input {
