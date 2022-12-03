@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use crate::common::{self, Day};
+use crate::common::Day;
 
 pub struct Day3;
 
@@ -15,8 +15,8 @@ fn parse_line(line: &str) -> Vec<u8> {
 }
 
 fn common_item(bp: &Backpack) -> u8 {
-    let first_half: HashSet<u8> = bp[0..bp.len() / 2].iter().map(|&x| x).collect();
-    let second_half: HashSet<u8> = bp[bp.len() / 2..bp.len()].iter().map(|&x| x).collect();
+    let first_half: HashSet<u8> = bp[0..bp.len() / 2].iter().copied().collect();
+    let second_half: HashSet<u8> = bp[bp.len() / 2..bp.len()].iter().copied().collect();
     let intersection = first_half.intersection(&second_half);
     for item in intersection {
         return *item;
@@ -25,8 +25,8 @@ fn common_item(bp: &Backpack) -> u8 {
 }
 
 fn common_item_3(bp1: &Backpack, bp2: &Backpack, bp3: &Backpack) -> u8 {
-    let bp1_set: HashSet<u8> = bp1.iter().map(|x| x.to_owned()).collect();
-    let bp2_set: HashSet<u8> = bp2.iter().map(|x| x.to_owned()).collect();
+    let bp1_set: HashSet<u8> = bp1.iter().copied().collect();
+    let bp2_set: HashSet<u8> = bp2.iter().copied().collect();
     let intersection1: HashSet<u8> = bp1_set
         .intersection(&bp2_set)
         .into_iter()
