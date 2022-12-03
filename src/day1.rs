@@ -23,7 +23,7 @@ impl<'a> Day<'a> for Day1 {
     }
 
     fn parse(input: &'a str) -> Self::Input {
-        input
+        input[0..input.len()-1]
             .split("\n\n")
             .map(|x| x.split('\n').map(|x| x.parse::<u32>().unwrap()).collect())
             .collect()

@@ -86,6 +86,6 @@ impl<'a> Day<'a> for Day2 {
     }
 
     fn parse(input: &'a str) -> Self::Input {
-        input.split('\n').map(parse_turn).collect()
+        input[0..input.len()-1].split('\n').map(parse_turn).collect()
     }
 }
