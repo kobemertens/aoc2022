@@ -2,75 +2,50 @@ use crate::common::Day;
 
 pub struct Day2;
 
-#[derive(Debug, PartialEq)]
-pub enum Shape {
-    Rock,
-    Paper,
-    Scissors,
-}
+fn part1(inp: (u8, u8)) -> usize {
+    match inp {
+        (b'A', b'X') => 4,
+        (b'A', b'Y') => 8,
+        (b'A', b'Z') => 3,
 
-type Turn = (Shape, Shape);
+        (b'B', b'X') => 1,
+        (b'B', b'Y') => 5,
+        (b'B', b'Z') => 9,
 
-fn get_my_points(turn: &Turn) -> usize {
-    let shape_score = match turn.1 {
-        Shape::Rock => 1,
-        Shape::Paper => 2,
-        Shape::Scissors => 3,
-    };
-
-    let outcome_score = match turn {
-        (Shape::Rock, Shape::Paper) => 6,
-        (Shape::Paper, Shape::Scissors) => 6,
-        (Shape::Scissors, Shape::Rock) => 6,
-        (x, y) => {
-            if x == y {
-                3
-            } else {
-                0
-            }
-        }
-    };
-
-    outcome_score + shape_score
-}
-
-fn my_move(opponent: &Shape, outcome: &Shape) -> usize {
-    match (opponent, outcome) {
-        (Shape::Rock, Shape::Rock) => 3,
-        (Shape::Rock, Shape::Paper) => 4,
-        (Shape::Rock, Shape::Scissors) => 8,
-
-        (Shape::Paper, Shape::Rock) => 1,
-        (Shape::Paper, Shape::Paper) => 5,
-        (Shape::Paper, Shape::Scissors) => 9,
-
-        (Shape::Scissors, Shape::Rock) => 2,
-        (Shape::Scissors, Shape::Paper) => 6,
-        (Shape::Scissors, Shape::Scissors) => 7,
+        (b'C', b'X') => 7,
+        (b'C', b'Y') => 2,
+        (b'C', b'Z') => 6,
+        _ => panic!("Invalid input"),
     }
 }
 
-fn parse_turn(line: &str) -> Turn {
+fn part2(inp: (u8, u8)) -> usize {
+    match inp {
+        (b'A', b'X') => 3,
+        (b'A', b'Y') => 4,
+        (b'A', b'Z') => 8,
+
+        (b'B', b'X') => 1,
+        (b'B', b'Y') => 5,
+        (b'B', b'Z') => 9,
+
+        (b'C', b'X') => 2,
+        (b'C', b'Y') => 6,
+        (b'C', b'Z') => 7,
+        _ => panic!("Invalid input"),
+    }
+}
+
+fn parse_turn(line: &str) -> (u8, u8) {
     let mut parts = line.split(' ');
-    let first = match parts.next().unwrap() {
-        "A" => Shape::Rock,
-        "B" => Shape::Paper,
-        "C" => Shape::Scissors,
-        _ => panic!("Should never happen"),
-    };
-
-    let second = match parts.next().unwrap() {
-        "X" => Shape::Rock,
-        "Y" => Shape::Paper,
-        "Z" => Shape::Scissors,
-        _ => panic!("Should never happen"),
-    };
-
-    (first, second)
+    (
+        *parts.next().unwrap().as_bytes().iter().next().unwrap(),
+        *parts.next().unwrap().as_bytes().iter().next().unwrap(),
+    )
 }
 
 impl<'a> Day<'a> for Day2 {
-    type Input = Vec<Turn>;
+    type Input = Vec<(u8, u8)>;
     type Output = usize;
 
     fn day_number() -> usize {
@@ -78,14 +53,17 @@ impl<'a> Day<'a> for Day2 {
     }
 
     fn part1(input: &Self::Input) -> Self::Output {
-        input.iter().map(get_my_points).sum()
+        input.iter().copied().map(part1).sum()
     }
 
     fn part2(input: &Self::Input) -> Self::Output {
-        input.iter().map(|(x, y)| my_move(x, y)).sum()
+        input.iter().copied().map(part2).sum()
     }
 
     fn parse(input: &'a str) -> Self::Input {
-        input[0..input.len()-1].split('\n').map(parse_turn).collect()
+        input[0..input.len() - 1]
+            .split('\n')
+            .map(parse_turn)
+            .collect()
     }
 }
