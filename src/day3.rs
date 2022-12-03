@@ -17,26 +17,20 @@ fn parse_line(line: &str) -> Vec<u8> {
 fn common_item(bp: &Backpack) -> u8 {
     let first_half: HashSet<u8> = bp[0..bp.len() / 2].iter().copied().collect();
     let second_half: HashSet<u8> = bp[bp.len() / 2..bp.len()].iter().copied().collect();
-    let intersection = first_half.intersection(&second_half);
-    for item in intersection {
-        return *item;
-    }
-    0
+    first_half
+        .intersection(&second_half)
+        .copied()
+        .next()
+        .unwrap()
 }
 
 fn common_item_3(bp1: &Backpack, bp2: &Backpack, bp3: &Backpack) -> u8 {
     let bp1_set: HashSet<u8> = bp1.iter().copied().collect();
     let bp2_set: HashSet<u8> = bp2.iter().copied().collect();
-    let intersection1: HashSet<u8> = bp1_set
-        .intersection(&bp2_set)
-        .into_iter()
-        .map(|x| x.to_owned())
-        .collect();
-    let bp3_set: HashSet<u8> = bp3.iter().map(|x| x.to_owned()).collect();
-    for item in intersection1.intersection(&bp3_set) {
-        return *item;
-    }
-    0
+    let bp3_set: HashSet<u8> = bp3.iter().copied().collect();
+
+    let inter: HashSet<u8> = bp1_set.intersection(&bp2_set).copied().collect();
+    inter.intersection(&bp3_set).copied().next().unwrap()
 }
 
 type Backpack = Vec<u8>;
@@ -50,20 +44,15 @@ impl<'a> Day<'a> for Day3 {
     }
 
     fn part1(input: &Self::Input) -> Self::Output {
-        let mut sum: usize = 0;
-        for i in input.iter().map(common_item) {
-            sum += usize::from(i);
-        }
-        sum
+        input.iter().map(common_item).map(|x| usize::from(x)).sum()
     }
 
     fn part2(input: &Self::Input) -> Self::Output {
-        let mut sum: usize = 0;
-        for i in (0..input.len()).step_by(3) {
-            let common_el = common_item_3(&input[i], &input[i + 1], &input[i + 2]);
-            sum += usize::from(common_el);
-        }
-        sum
+        input
+            .chunks(3)
+            .map(|x| common_item_3(&x[0], &x[1], &x[2]))
+            .map(|x| usize::from(x))
+            .sum()
     }
 
     fn parse(input: &'a str) -> Self::Input {
