@@ -7,11 +7,9 @@ fn part1(inp: (u8, u8)) -> usize {
         (b'A', b'X') => 4,
         (b'A', b'Y') => 8,
         (b'A', b'Z') => 3,
-
         (b'B', b'X') => 1,
         (b'B', b'Y') => 5,
         (b'B', b'Z') => 9,
-
         (b'C', b'X') => 7,
         (b'C', b'Y') => 2,
         (b'C', b'Z') => 6,
@@ -24,24 +22,14 @@ fn part2(inp: (u8, u8)) -> usize {
         (b'A', b'X') => 3,
         (b'A', b'Y') => 4,
         (b'A', b'Z') => 8,
-
         (b'B', b'X') => 1,
         (b'B', b'Y') => 5,
         (b'B', b'Z') => 9,
-
         (b'C', b'X') => 2,
         (b'C', b'Y') => 6,
         (b'C', b'Z') => 7,
         _ => panic!("Invalid input"),
     }
-}
-
-fn parse_turn(line: &str) -> (u8, u8) {
-    let mut parts = line.split(' ');
-    (
-        *parts.next().unwrap().as_bytes().iter().next().unwrap(),
-        *parts.next().unwrap().as_bytes().iter().next().unwrap(),
-    )
 }
 
 impl<'a> Day<'a> for Day2 {
@@ -63,7 +51,10 @@ impl<'a> Day<'a> for Day2 {
     fn parse(input: &'a str) -> Self::Input {
         input[0..input.len() - 1]
             .split('\n')
-            .map(parse_turn)
+            .map(|line| {
+                let mut bytes = line.as_bytes().iter().copied();
+                (bytes.next().unwrap(), bytes.skip(1).next().unwrap())
+            })
             .collect()
     }
 }
