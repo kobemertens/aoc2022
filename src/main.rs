@@ -3,6 +3,7 @@ pub mod common;
 mod day1;
 mod day2;
 mod day3;
+mod day4;
 
 use std::{borrow::Cow, env, fs};
 
@@ -41,6 +42,7 @@ fn main() {
         1 => run_day::<day1::Day1>(part1, part2, &content),
         2 => run_day::<day2::Day2>(part1, part2, &content),
         3 => run_day::<day3::Day3>(part1, part2, &content),
+        4 => run_day::<day4::Day4>(part1, part2, &content),
         _ => {}
     }
 }
