@@ -65,6 +65,9 @@ fn main() {
         3 => run_day::<day3::Day3>(part1, part2, &content),
         4 => run_day::<day4::Day4>(part1, part2, &content),
         5 => run_day::<day5::Day5>(part1, part2, &content),
+        6 => run_day::<day6::Day6>(part1, part2, &content),
+        7 => run_day::<day7::Day7>(part1, part2, &content),
+        8 => run_day::<day8::Day8>(part1, part2, &content),
         _ => {}
     }
 }
