@@ -80,13 +80,6 @@ impl<'a> Day<'a> for Day7 {
     }
 
     fn part1(input: &Self::Input) -> Self::Output {
-        let temp: Vec<(usize, String)> = input
-            .dirs
-            .iter()
-            .map(|x| x.name.clone())
-            .enumerate()
-            .collect();
-        println!("{:?}", temp);
         (0..input.dirs.len())
             .map(|x| input.get_directory_size(x))
             .filter(|&x| x <= 100000)
@@ -94,7 +87,18 @@ impl<'a> Day<'a> for Day7 {
     }
 
     fn part2(input: &Self::Input) -> Self::Output {
-        0
+        let capacity: usize = 70000000;
+        let taken = input.get_directory_size(0);
+        let free = capacity - taken;
+        println!("{}", free);
+        let needed = 30000000 - free;
+
+        let mut sizes: Vec<usize> = (0..input.dirs.len())
+            .map(|x| input.get_directory_size(x))
+            .filter(|&x| x >= needed)
+            .collect();
+        sizes.sort();
+        sizes[0]
     }
 
     fn parse(input: &'a str) -> Self::Input {
@@ -103,7 +107,6 @@ impl<'a> Day<'a> for Day7 {
         let mut cursor = 0;
 
         for line in input[0..input.len() - 1].lines().skip(1) {
-            println!("Cursor: {}, line: {}", cursor, line);
             if line == "$ ls" {
                 continue;
             } else if let Some(x) = line.strip_prefix("dir ") {
@@ -111,7 +114,15 @@ impl<'a> Day<'a> for Day7 {
             } else if let Some(x) = line.strip_prefix("$ cd ") {
                 match x {
                     ".." => cursor = dir_table.dirs[cursor].parent.unwrap(),
-                    y => cursor = dir_table.find_dir(y).unwrap(),
+                    y => {
+                        cursor = dir_table.dirs[cursor]
+                            .dirs
+                            .iter()
+                            .map(|&x| (x, &dir_table.dirs[x]))
+                            .find(|x| x.1.name == y)
+                            .unwrap()
+                            .0
+                    }
                 }
             } else {
                 let mut parts = line.split(' ');
