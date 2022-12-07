@@ -2,36 +2,14 @@ use crate::common::Day;
 
 pub struct Day7;
 
-pub struct Dir<'a> {
+pub struct Dir {
     name: String,
-    parent: Option<&'a Dir<'a>>,
+    parent: Option<usize>,
     files: Vec<File>,
-    dirs: Vec<Dir<'a>>,
+    dirs: Vec<usize>,
 }
 
-impl<'a> Dir<'a> {
-    fn new(name: &str) -> Dir<'a> {
-        Dir {
-            name: name.to_string(),
-            parent: None,
-            files: vec![],
-            dirs: vec![],
-        }
-    }
-
-    fn add_dir(&mut self, name: &str) {
-        self.dirs.push(Dir {
-            name: name.to_string(),
-            parent: Some(&self),
-            files: vec![],
-            dirs: vec![],
-        });
-    }
-
-    fn find_dir(&self, name: &str) -> Option<&Dir> {
-        self.dirs.iter().find(|d| d.name == name)
-    }
-
+impl Dir {
     fn add_file(&mut self, name: &str, size: usize) {
         self.files.push(File {
             name: name.to_string(),
@@ -39,9 +17,13 @@ impl<'a> Dir<'a> {
         })
     }
 
-    fn get_size(&self) -> usize {
+    fn get_size(&self, dir_table: &DirTable) -> usize {
         let files_size: usize = self.files.iter().map(|x| x.size).sum();
-        let children_size: usize = self.dirs.iter().map(|x| x.get_size()).sum();
+        let children_size: usize = self
+            .dirs
+            .iter()
+            .map(|&x| dir_table.dirs[x].get_size(&dir_table))
+            .sum();
         files_size + children_size
     }
 }
@@ -51,8 +33,46 @@ pub struct File {
     size: usize,
 }
 
+pub struct DirTable {
+    dirs: Vec<Dir>,
+}
+
+impl DirTable {
+    fn new() -> DirTable {
+        DirTable { dirs: vec![] }
+    }
+
+    fn find_dir(&self, name: &str) -> Option<usize> {
+        Some(
+            self.dirs
+                .iter()
+                .enumerate()
+                .find(|(_, x)| x.name == name)?
+                .0,
+        )
+    }
+
+    fn add_dir(&mut self, name: &str, parent: Option<usize>) {
+        let dir_index = self.dirs.len();
+        self.dirs.push(Dir {
+            name: name.to_string(),
+            parent: Some(parent.unwrap_or(0)),
+            files: vec![],
+            dirs: vec![],
+        });
+
+        if let Some(parent_index) = parent {
+            self.dirs[parent_index].dirs.push(dir_index);
+        }
+    }
+
+    fn get_directory_size(&self, dir_index: usize) -> usize {
+        self.dirs[dir_index].get_size(&self)
+    }
+}
+
 impl<'a> Day<'a> for Day7 {
-    type Input = Dir<'a>;
+    type Input = DirTable;
     type Output = usize;
 
     fn day_number() -> usize {
@@ -60,7 +80,17 @@ impl<'a> Day<'a> for Day7 {
     }
 
     fn part1(input: &Self::Input) -> Self::Output {
-        input.get_size()
+        let temp: Vec<(usize, String)> = input
+            .dirs
+            .iter()
+            .map(|x| x.name.clone())
+            .enumerate()
+            .collect();
+        println!("{:?}", temp);
+        (0..input.dirs.len())
+            .map(|x| input.get_directory_size(x))
+            .filter(|&x| x <= 100000)
+            .sum()
     }
 
     fn part2(input: &Self::Input) -> Self::Output {
@@ -68,25 +98,28 @@ impl<'a> Day<'a> for Day7 {
     }
 
     fn parse(input: &'a str) -> Self::Input {
-        let mut root = Dir::new("/");
-        let mut cursor = &mut root;
-        for line in input.lines().skip(1) {
+        let mut dir_table = DirTable::new();
+        dir_table.add_dir("/", None);
+        let mut cursor = 0;
+
+        for line in input[0..input.len() - 1].lines().skip(1) {
+            println!("Cursor: {}, line: {}", cursor, line);
             if line == "$ ls" {
                 continue;
             } else if let Some(x) = line.strip_prefix("dir ") {
-                cursor.add_dir(x);
+                dir_table.add_dir(x, Some(cursor));
             } else if let Some(x) = line.strip_prefix("$ cd ") {
                 match x {
-                    ".." => cursor = &mut cursor.parent.unwrap(),
-                    y => cursor = &mut cursor.find_dir(y).unwrap(),
+                    ".." => cursor = dir_table.dirs[cursor].parent.unwrap(),
+                    y => cursor = dir_table.find_dir(y).unwrap(),
                 }
             } else {
                 let mut parts = line.split(' ');
-                let name = parts.next().unwrap();
                 let size = parts.next().unwrap().parse::<usize>().unwrap();
-                cursor.add_file(name, size);
+                let name = parts.next().unwrap();
+                dir_table.dirs[cursor].add_file(name, size);
             }
         }
-        root
+        dir_table
     }
 }
