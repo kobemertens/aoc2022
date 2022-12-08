@@ -10,18 +10,12 @@ type Dir = (i32, i32);
 type Pos = (usize, usize);
 
 fn look_into_direction(grid: &Grid, vis: &mut Visibilities, start_pos: Pos, dir: Dir) {
-    println!("Looking from {:?} into direction {:?}", start_pos, dir);
     let mut highest: Option<usize> = None;
     let (mut row, mut col) = start_pos;
     let height = grid.len();
     let width = grid[0].len();
     while row < height && col < width {
-        println!(
-            "Highest: {:?}, row: {}, col: {}, value: {}",
-            highest, row, col, grid[row][col]
-        );
         if highest == None || grid[row][col] > highest.unwrap() {
-            println!("Is visible");
             vis[row][col] = true;
             highest = Some(grid[row][col]);
         }
@@ -69,7 +63,6 @@ fn scenic_score(grid: &Grid, tree_pos: Pos) -> usize {
             }
         }
     }
-    println!("{:?}", scores);
 
     scores.iter().product()
 }
@@ -83,7 +76,7 @@ impl<'a> Day<'a> for Day8 {
     }
 
     fn part1(input: &Self::Input) -> Self::Output {
-        let grid = input.clone();
+        let grid = input;
         let mut vis = vec![vec![false; grid[0].len()]; grid.len()];
         let width = grid[0].len();
         let height = grid.len();
@@ -102,12 +95,11 @@ impl<'a> Day<'a> for Day8 {
     }
 
     fn part2(input: &Self::Input) -> Self::Output {
-        let grid = input.clone();
+        let grid = input;
         let mut max = 0;
         for r in 1..grid.len() - 1 {
             for c in 1..grid[0].len() - 1 {
                 let score = scenic_score(&grid, (r, c));
-                println!("{}", score);
                 if score > max {
                     max = score;
                 }
