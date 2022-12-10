@@ -1,14 +1,6 @@
 pub mod common;
 
 mod day1;
-mod day2;
-mod day3;
-mod day4;
-mod day5;
-mod day6;
-mod day7;
-mod day8;
-mod day9;
 mod day10;
 mod day11;
 mod day12;
@@ -19,12 +11,20 @@ mod day16;
 mod day17;
 mod day18;
 mod day19;
+mod day2;
 mod day20;
 mod day21;
 mod day22;
 mod day23;
 mod day24;
 mod day25;
+mod day3;
+mod day4;
+mod day5;
+mod day6;
+mod day7;
+mod day8;
+mod day9;
 
 use std::{borrow::Cow, env, fs};
 
@@ -69,6 +69,9 @@ fn main() {
         7 => run_day::<day7::Day7>(part1, part2, &content),
         8 => run_day::<day8::Day8>(part1, part2, &content),
         9 => run_day::<day9::Day9>(part1, part2, &content),
-        _ => {}
+        10 => run_day::<day10::Day10>(part1, part2, &content),
+        _ => {
+            panic!("Day is not implemented yet")
+        }
     }
 }
