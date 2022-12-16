@@ -71,9 +71,9 @@ impl Crt {
     }
 
     fn progress_cycle(&mut self, sprite_pos: i32) {
-        let col = self.cycle % 40;
-        if sprite_pos - 1 == i32::try_from(col).unwrap()
-            || sprite_pos == i32::try_from(col).unwrap()
+        let col = i32::try_from(self.cycle % 40).unwrap();
+        if sprite_pos - 1 == col
+            || sprite_pos == col
             || sprite_pos + 1 == i32::try_from(col).unwrap()
         {
             self.screen[self.cycle] = true;

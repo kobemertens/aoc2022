@@ -4,8 +4,8 @@ mod day1;
 mod day10;
 mod day11;
 mod day12;
-mod day13;
-mod day14;
+// mod day13;
+// mod day14;
 mod day15;
 mod day16;
 mod day17;
@@ -70,6 +70,11 @@ fn main() {
         8 => run_day::<day8::Day8>(part1, part2, &content),
         9 => run_day::<day9::Day9>(part1, part2, &content),
         10 => run_day::<day10::Day10>(part1, part2, &content),
+        11 => run_day::<day11::Day11>(part1, part2, &content),
+        12 => run_day::<day12::Day12>(part1, part2, &content),
+        // 13 => run_day::<day13::Day13>(part1, part2, &content),
+        // 14 => run_day::<day14::Day14>(part1, part2, &content),
+        15 => run_day::<day15::Day15>(part1, part2, &content),
         _ => {
             panic!("Day is not implemented yet")
         }
